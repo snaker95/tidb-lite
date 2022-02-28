@@ -2,12 +2,14 @@ module github.com/WangXiangUSTC/tidb-lite
 
 go 1.16
 
+replace github.com/pingcap/tidb => github.com/pingcap/tidb v1.1.0-beta.0.20220228060344-f0d83522692c
+
 require (
-	github.com/go-sql-driver/mysql v1.5.0
-	github.com/pingcap/check v0.0.0-20200212061837-5e12011dc712
-	github.com/pingcap/errors v0.11.5-0.20201126102027-b0a155152ca3
-	github.com/pingcap/log v0.0.0-20210317133921-96f4fcab92a4
-	github.com/pingcap/parser v0.0.0-20210623034316-5ee95ed0081f
-	github.com/pingcap/tidb v1.1.0-beta.0.20211223113747-6416f8d60147
-	go.uber.org/zap v1.17.0
+	github.com/go-sql-driver/mysql v1.6.0
+	github.com/pingcap/check v0.0.0-20211026125417-57bd13f7b5f0
+	github.com/pingcap/errors v0.11.5-0.20211224045212-9687c2b0f87c
+	github.com/pingcap/log v0.0.0-20211215031037-e024ba4eb0ee
+	github.com/pingcap/tidb v1.1.0-beta.0.20220228074545-37899e17550b
+	github.com/pingcap/tidb/parser v0.0.0-20220221151142-1624123b84ab
+	go.uber.org/zap v1.20.0
 )

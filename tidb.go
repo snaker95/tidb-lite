@@ -15,6 +15,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/pingcap/tidb/parser/model"
+	"github.com/pingcap/tidb/parser/mysql"
+	"github.com/pingcap/tidb/parser/terror"
 	"runtime"
 	"strconv"
 	"strings"
@@ -25,9 +28,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pingcap/errors"
 	"github.com/pingcap/log"
-	"github.com/pingcap/parser/model"
-	"github.com/pingcap/parser/mysql"
-	"github.com/pingcap/parser/terror"
 	"github.com/pingcap/tidb/bindinfo"
 	"github.com/pingcap/tidb/config"
 	"github.com/pingcap/tidb/ddl"
@@ -42,7 +42,6 @@ import (
 	"github.com/pingcap/tidb/statistics"
 	kvstore "github.com/pingcap/tidb/store"
 	"github.com/pingcap/tidb/store/mockstore"
-	"github.com/pingcap/tidb/store/tikv"
 	"github.com/pingcap/tidb/util/logutil"
 	"github.com/pingcap/tidb/util/memory"
 	"github.com/pingcap/tidb/util/printer"
@@ -259,7 +258,7 @@ func (t *TiDBServer) setGlobalVars() error {
 	variable.ForcePriority = int32(priority)
 	variable.SetSysVar(variable.TiDBForcePriority, mysql.Priority2Str[priority])
 	variable.SetSysVar(variable.TiDBOptDistinctAggPushDown, variable.BoolToOnOff(cfg.Performance.DistinctAggPushDown))
-	variable.SetSysVar(variable.TIDBMemQuotaQuery, strconv.FormatInt(cfg.MemQuotaQuery, 10))
+	variable.SetSysVar(variable.TiDBMemQuotaQuery, strconv.FormatInt(cfg.MemQuotaQuery, 10))
 	variable.SetSysVar("lower_case_table_names", strconv.Itoa(cfg.LowerCaseTableNames))
 	variable.SetSysVar(variable.LogBin, variable.BoolToOnOff(config.GetGlobalConfig().Binlog.Enable))
 	variable.SetSysVar(variable.Port, fmt.Sprintf("%d", cfg.Port))
@@ -268,7 +267,7 @@ func (t *TiDBServer) setGlobalVars() error {
 	variable.SetSysVar(variable.TiDBSlowQueryFile, cfg.Log.SlowQueryFile)
 	variable.SetSysVar(variable.TiDBIsolationReadEngines, strings.Join(cfg.IsolationRead.Engines, ", "))
 	variable.SetSysVar(variable.TiDBEnforceMPPExecution, variable.BoolToOnOff(config.GetGlobalConfig().Performance.EnforceMPP))
-	//variable.SetSysVar(variable.CharsetDatabase, "utf8")
+	// variable.SetSysVar(variable.CharsetDatabase, "utf8")
 	variable.MemoryUsageAlarmRatio.Store(cfg.Performance.MemoryUsageAlarmRatio)
 
 	// For CI environment we default enable prepare-plan-cache.
@@ -289,8 +288,8 @@ func (t *TiDBServer) setGlobalVars() error {
 		}
 	}
 
-	atomic.StoreUint64(&tikv.CommitMaxBackoff, uint64(parseDuration(cfg.TiKVClient.CommitTimeout).Seconds()*1000))
-	tikv.RegionCacheTTLSec = int64(cfg.TiKVClient.RegionCacheTTL)
+	// atomic.StoreUint64(&transaction.CommitMaxBackoff, uint64(parseDuration(cfg.TiKVClient.CommitTimeout).Seconds()*1000))
+	// transaction.RegionCache = int64(cfg.TiKVClient.RegionCacheTTL)
 
 	return nil
 }
@@ -305,7 +304,7 @@ func (t *TiDBServer) serverShutdown(isgraceful bool) {
 }
 
 func (t *TiDBServer) closeDomainAndStorage() {
-	atomic.StoreUint32(&tikv.ShuttingDown, 1)
+	// atomic.StoreUint32(&tikv.ShuttingDown, 1)
 	t.dom.Close()
 	if err := t.storage.Close(); err != nil {
 		log.Error("close tidb lite's storage failed", zap.Error(err))
@@ -324,9 +323,9 @@ func (t *TiDBServer) cleanup(graceful bool) {
 
 func (t *TiDBServer) setupLog() error {
 	t.cfg.Log.Level = "warn"
-	if err := logutil.InitZapLogger(t.cfg.Log.ToLogConfig()); err != nil {
-		return err
-	}
+	// if err := logutil.InitZapLogger(t.cfg.Log.ToLogConfig()); err != nil {
+	// 	return err
+	// }
 
 	if err := logutil.InitLogger(t.cfg.Log.ToLogConfig()); err != nil {
 		return err
