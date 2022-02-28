@@ -1,4 +1,4 @@
-module github.com/WangXiangUSTC/tidb-lite
+module github.com/snaker95/tidb-lite
 
 go 1.16
 
